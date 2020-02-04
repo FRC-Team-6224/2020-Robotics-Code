@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -66,33 +67,23 @@ public class RobotContainer {
   }
 
   private void configureDriverBindings() {
+  
+
     m_drivetrainSubsystem.setDefaultCommand(
       new RunCommand(() -> 
-        m_drivetrainSubsystem.arcadeDrive(
+      
+        m_drivetrainSubsystem.drive(
           m_driverController.getY(GenericHID.Hand.kLeft), 
           m_driverController.getX(GenericHID.Hand.kRight)), m_drivetrainSubsystem
       ));
     new JoystickButton(m_driverController, Button.kBumperRight.value)
-    .whenPressed(()  -> { m_drivetrainSubsystem.setMaxOutput(0.5);})
-    .whenReleased(() -> { m_drivetrainSubsystem.setMaxOutput(1.0);});
-    // A split-stick arcade command, with forward/backward controlled by the left  
-    // hand, and turning controlled by the right.
+    .whenPressed(()  -> { m_drivetrainSubsystem.enableCrawlMode(true);})
+    .whenReleased(() -> { m_drivetrainSubsystem.enableCrawlMode(false);});
 
-    // m_drivetrainSubsystem.setDefaultCommand(
-
-    // new RunCommand(() -> {
-    //   DriveCommand cmd = new DriveCommand(m_drivetrainSubsystem);
-    //   cmd.setMoveValue(m_driverController.getRawAxis(OIConstants.kMoveAxis));
-    //   cmd.setRotateValue(m_driverController.getRawAxis(OIConstants.kRotateAxis));
-    //   cmd.execute();
-    // }));
-    
-    // m_drive.arcadeDrive(
-    //  driverController.getY(GenericHID.Hand.kLeft),
-    //   driverController.getX(GenericHID.Hand.kRight)),
-    //   m_robotDrive)
+  
 
   }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -100,8 +91,13 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return null;
+return null;
+    // TODO: For some reason, the rotate value is very slow
+    // return new RunCommand(() -> 
+    //       m_drivetrainSubsystem.drive(-0.5,0.75)
+    //   );
+  
     // An ExampleCommand will run in autonomous
-    // return m_autoCommand;
+    //return m_autoCommand;
   }
 }

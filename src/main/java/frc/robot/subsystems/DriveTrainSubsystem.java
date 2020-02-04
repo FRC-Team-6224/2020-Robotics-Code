@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,8 +18,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
   private VictorSP m_right;
   private DifferentialDrive m_drive;
 
+  private boolean m_crawlMode;
+  private DigitalInput m_testSwitch = new DigitalInput(0);
 
-  // private double speedFactor
 
   public DriveTrainSubsystem() {
     m_left = new VictorSP(DriveTrainConstants.kLeftDrive);
@@ -26,34 +28,38 @@ public class DriveTrainSubsystem extends SubsystemBase {
     m_drive = new DifferentialDrive(m_left, m_right);
   }
 
-  public void arcadeDrive(double moveValue, double rotateValue) {
-    // // dead bands round up and avoid errors
-    // if ((moveValue <= 0.2 && moveValue >= -0.2)) {
-    //   moveValue = 0;
-    // }
-
-    // // setting max speed for robot so it does not go too fast
-    // if (moveValue > 0.9) {
-    //   moveValue = 0.9;
-    // }
-
-    // if (moveValue < -0.9) {
-    //   moveValue = -0.9;
-    // }
-    // // speed limit by half
-    
-    // moveValue = moveValue / 1.25;
-    // rotateValue = rotateValue / 1.25;
+  public void drive(double moveValue, double rotateValue) {
+    System.out.println("MOVE VALUE: " + moveValue + " ROTATE VALUE: " + rotateValue);
 
     m_drive.arcadeDrive(moveValue, rotateValue);
   }
 
 
-  public void setMaxOutput(double maxOutput) {
-    m_drive.setMaxOutput(maxOutput);
+  public void enableCrawlMode(boolean enabled) {
+
+    m_crawlMode = enabled;
   }
+
+
+  public void setMaxOutput(double maxOutput) {
+
+    double m = maxOutput;
+    if (m_crawlMode) {
+      m =  m * 0.5;
+    }
+    m_drive.setMaxOutput(m);
+  }
+
+
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+  //   // This method will be called once per scheduler run
+  // if(!m_testSwitch.get()){
+  //   setMaxOutput(0);
+  // }
+  // else{
+  //   m_drive.setMaxOutput(1);
+
+  // }
   }
 }

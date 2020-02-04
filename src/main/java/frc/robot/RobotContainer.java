@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.ColorWheelSubsystem;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -37,6 +38,7 @@ public class RobotContainer {
   private final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
   private DriveTrainSubsystem m_drivetrainSubsystem = new DriveTrainSubsystem();
+  private ColorWheelSubsystem m_colorwheelSubsystem = new ColorWheelSubsystem();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.

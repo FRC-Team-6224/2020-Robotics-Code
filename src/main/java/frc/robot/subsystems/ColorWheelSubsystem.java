@@ -31,7 +31,7 @@ private final ColorSensorV3 m_colorSensor = new ColorSensorV3(m_i2cPort);
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    Color detectedcolor = m_colorSensor.getColor();
-    System.out.println("Color detected" + detectedcolor.red + " " + detectedcolor.green + " " + detectedcolor.blue);
+    // Color detectedcolor = m_colorSensor.getColor();
+    // System.out.println("Color detected" + detectedcolor.red + " " + detectedcolor.green + " " + detectedcolor.blue);
   }
 }

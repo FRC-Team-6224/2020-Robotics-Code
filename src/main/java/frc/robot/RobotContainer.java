@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.ColorWheelSubsystem;
 import frc.robot.subsystems.DriveTrainSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -39,6 +41,7 @@ public class RobotContainer {
 
   private DriveTrainSubsystem m_drivetrainSubsystem = new DriveTrainSubsystem();
   private ColorWheelSubsystem m_colorwheelSubsystem = new ColorWheelSubsystem();
+  private VisionSubsystem m_visionSubsystem = new VisionSubsystem();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -46,13 +49,16 @@ public class RobotContainer {
   public RobotContainer() {
 
         // this creates a USB camera and starts streaming it to the smart dashboard
-        UsbCamera cam1 = CameraServer.getInstance().startAutomaticCapture(0);
-        cam1.setResolution(320,240);
+        //UsbCamera cam1 = CameraServer.getInstance().startAutomaticCapture(0);
+        //cam1.setResolution(320,240);
 
     System.out.println("=====> Starting");
     // Configure the button bindings
     configureButtonBindings();
     configureDriverBindings();
+
+
+    //m_drivetrainSubsystem.enableCrawlMode(true);
   }
 
   /**
@@ -71,16 +77,16 @@ public class RobotContainer {
   private void configureDriverBindings() {
   
 
-    m_drivetrainSubsystem.setDefaultCommand(
-      new RunCommand(() -> 
+    // m_drivetrainSubsystem.setDefaultCommand(
+    //   new RunCommand(() -> 
       
-        m_drivetrainSubsystem.drive(
-          m_driverController.getY(GenericHID.Hand.kLeft), 
-          m_driverController.getX(GenericHID.Hand.kRight)), m_drivetrainSubsystem
-      ));
-    new JoystickButton(m_driverController, Button.kBumperRight.value)
-    .whenPressed(()  -> { m_drivetrainSubsystem.enableCrawlMode(true);})
-    .whenReleased(() -> { m_drivetrainSubsystem.enableCrawlMode(false);});
+    //     m_drivetrainSubsystem.drive(
+    //       m_driverController.getY(GenericHID.Hand.kLeft), 
+    //       m_driverController.getX(GenericHID.Hand.kRight)), m_drivetrainSubsystem
+    //   ));
+    // new JoystickButton(m_driverController, Button.kBumperRight.value)
+    // .whenPressed(()  -> { m_drivetrainSubsystem.enableCrawlMode(true);})
+    // .whenReleased(() -> { m_drivetrainSubsystem.enableCrawlMode(false);});
 
   
 
@@ -93,11 +99,30 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-return null;
+
+    
     // TODO: For some reason, the rotate value is very slow
-    // return new RunCommand(() -> 
-    //       m_drivetrainSubsystem.drive(-0.5,0.75)
-    //   );
+    return new RunCommand(() -> {
+          double hasTarget = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
+    
+          double hOffset = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+      
+
+          if (hasTarget == 1.0) {
+            double rotate = 0;
+
+            if (hOffset > 2.8){
+              rotate = -0.5;
+            } else if (hOffset < -2.8) {
+              rotate = 0.5;
+            }
+  
+              m_drivetrainSubsystem.drive(-0.5, rotate);
+
+          }
+          
+        }
+      );
   
     // An ExampleCommand will run in autonomous
     //return m_autoCommand;

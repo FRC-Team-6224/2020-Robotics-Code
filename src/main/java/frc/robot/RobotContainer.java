@@ -30,101 +30,89 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  // private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+    // The robot's subsystems and commands are defined here...
+    // private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
-  // private final ExampleCommand m_autoCommand = new
-  // ExampleCommand(m_exampleSubsystem);
+    // private final ExampleCommand m_autoCommand = new
+    // ExampleCommand(m_exampleSubsystem);
 
-  // the driver's controller
-  private final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+    // the driver's controller
+    private final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
-  private DriveTrainSubsystem m_drivetrainSubsystem = new DriveTrainSubsystem();
-  private ColorWheelSubsystem m_colorwheelSubsystem = new ColorWheelSubsystem();
-  private VisionSubsystem m_visionSubsystem = new VisionSubsystem();
+    private DriveTrainSubsystem m_drivetrainSubsystem = new DriveTrainSubsystem();
+    private ColorWheelSubsystem m_colorwheelSubsystem = new ColorWheelSubsystem();
+    private VisionSubsystem m_visionSubsystem = new VisionSubsystem();
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
-  public RobotContainer() {
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and commands.
+     */
+    public RobotContainer() {
 
         // this creates a USB camera and starts streaming it to the smart dashboard
-        //UsbCamera cam1 = CameraServer.getInstance().startAutomaticCapture(0);
-        //cam1.setResolution(320,240);
+        // UsbCamera cam1 = CameraServer.getInstance().startAutomaticCapture(0);
+        // cam1.setResolution(320,240);
 
-    System.out.println("=====> Starting");
-    // Configure the button bindings
-    configureButtonBindings();
-    configureDriverBindings();
+        System.out.println("=====> Starting");
+        // Configure the button bindings
+        configureButtonBindings();
+        configureDriverBindings();
 
+        // m_drivetrainSubsystem.enableCrawlMode(true);
+    }
 
-    //m_drivetrainSubsystem.enableCrawlMode(true);
-  }
+    /**
+     * Use this method to define your button->command mappings. Buttons can be
+     * created by instantiating a {@link GenericHID} or one of its subclasses
+     * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
+     * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+     */
+    private void configureButtonBindings() {
+        new JoystickButton(m_driverController, Button.kA.value).whenPressed(() -> {
+            System.out.println("BUTTON PUSHED");
+            // m_driverController.setRumble(RumbleType.kLeftRumble, 1.0);
+        });
+    }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be
-   * created by instantiating a {@link GenericHID} or one of its subclasses
-   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
-   * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {
-    new JoystickButton(m_driverController, Button.kA.value).whenPressed(() -> {
-      System.out.println("BUTTON PUSHED");
-      // m_driverController.setRumble(RumbleType.kLeftRumble, 1.0);
-    });
-  }
+    private void configureDriverBindings() {
 
-  private void configureDriverBindings() {
-  
+        // m_drivetrainSubsystem.setDefaultCommand(
+        // new RunCommand(() ->
 
-    // m_drivetrainSubsystem.setDefaultCommand(
-    //   new RunCommand(() -> 
-      
-    //     m_drivetrainSubsystem.drive(
-    //       m_driverController.getY(GenericHID.Hand.kLeft), 
-    //       m_driverController.getX(GenericHID.Hand.kRight)), m_drivetrainSubsystem
-    //   ));
-    // new JoystickButton(m_driverController, Button.kBumperRight.value)
-    // .whenPressed(()  -> { m_drivetrainSubsystem.enableCrawlMode(true);})
-    // .whenReleased(() -> { m_drivetrainSubsystem.enableCrawlMode(false);});
+        // m_drivetrainSubsystem.drive(
+        // m_driverController.getY(GenericHID.Hand.kLeft),
+        // m_driverController.getX(GenericHID.Hand.kRight)), m_drivetrainSubsystem
+        // ));
+        // new JoystickButton(m_driverController, Button.kBumperRight.value)
+        // .whenPressed(() -> { m_drivetrainSubsystem.enableCrawlMode(true);})
+        // .whenReleased(() -> { m_drivetrainSubsystem.enableCrawlMode(false);});
 
-  
+    }
 
-  }
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        return new RunCommand(() -> {
+            double hasTarget = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
 
+            double hOffset = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
+            if (hasTarget == 1.0) {
+                double rotate = 0;
 
-    
-    // TODO: For some reason, the rotate value is very slow
-    return new RunCommand(() -> {
-          double hasTarget = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
-    
-          double hOffset = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
-      
+                if (hOffset > 2.8) {
+                    rotate = -0.5;
+                } else if (hOffset < -2.8) {
+                    rotate = 0.5;
+                }
 
-          if (hasTarget == 1.0) {
-            double rotate = 0;
-
-            if (hOffset > 2.8){
-              rotate = -0.5;
-            } else if (hOffset < -2.8) {
-              rotate = 0.5;
+                m_drivetrainSubsystem.drive(-0.5, rotate);
             }
-  
-              m_drivetrainSubsystem.drive(-0.5, rotate);
+        });
 
-          }
-          
-        }
-      );
-  
-    // An ExampleCommand will run in autonomous
-    //return m_autoCommand;
-  }
+        // An ExampleCommand will run in autonomous
+        // return m_autoCommand;
+    }
 }

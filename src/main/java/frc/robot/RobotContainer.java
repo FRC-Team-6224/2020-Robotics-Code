@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.ColorWheelSubsystem;
 import frc.robot.subsystems.DriveTrainSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -40,24 +39,17 @@ public class RobotContainer {
     private final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
     private DriveTrainSubsystem m_drivetrainSubsystem = new DriveTrainSubsystem();
-    private ColorWheelSubsystem m_colorwheelSubsystem = new ColorWheelSubsystem();
-    private VisionSubsystem m_visionSubsystem = new VisionSubsystem();
-
+    
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-
         // this creates a USB camera and starts streaming it to the smart dashboard
         // UsbCamera cam1 = CameraServer.getInstance().startAutomaticCapture(0);
         // cam1.setResolution(320,240);
 
-        System.out.println("=====> Starting");
-        // Configure the button bindings
         configureButtonBindings();
         configureDriverBindings();
-
-        // m_drivetrainSubsystem.enableCrawlMode(true);
     }
 
     /**

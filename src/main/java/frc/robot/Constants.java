@@ -30,5 +30,6 @@ public final class Constants {
         // buttons for driver joystick
         public static final int kMoveAxis = 1; // LY (up and down)
         public static final int kRotateAxis = 4; // RX (left and right)
+        public static final int kRightTrigger = 3;
     }
 }

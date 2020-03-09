@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.ColorWheelSubsystem;
 import frc.robot.subsystems.DriveTrainSubsystem;
+import frc.robot.subsystems.SPXDriveTrainSubsystem;
+import frc.robot.subsystems.ShootingSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -38,7 +40,9 @@ public class RobotContainer {
     // the driver's controller
     private final XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
 
-    private DriveTrainSubsystem m_drivetrainSubsystem = new DriveTrainSubsystem();
+//    private DriveTrainSubsystem m_drivetrainSubsystem = new DriveTrainSubsystem();
+    private SPXDriveTrainSubsystem m_spxdrivetrainSubsystem = new SPXDriveTrainSubsystem();
+    private ShootingSubsystem m_shootingSubsystem = new ShootingSubsystem();
     
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -59,24 +63,27 @@ public class RobotContainer {
      * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
     private void configureButtonBindings() {
-        new JoystickButton(m_driverController, Button.kA.value).whenPressed(() -> {
-            System.out.println("BUTTON PUSHED");
-            // m_driverController.setRumble(RumbleType.kLeftRumble, 1.0);
-        });
+        // new JoystickButton(m_driverController, Button.kA.value).whenPressed(() -> {
+        //     System.out.println("BUTTON PUSHED");
+        //     // m_driverController.setRumble(RumbleType.kLeftRumble, 1.0);
+        // });
     }
 
     private void configureDriverBindings() {
 
-        // m_drivetrainSubsystem.setDefaultCommand(
-        // new RunCommand(() ->
+         m_spxdrivetrainSubsystem.setDefaultCommand(
+            new RunCommand(() ->
+                m_spxdrivetrainSubsystem.arcadeDrive(
+                m_driverController.getY(GenericHID.Hand.kLeft),
+                m_driverController.getX(GenericHID.Hand.kRight)), m_spxdrivetrainSubsystem
+            ));
 
-        // m_drivetrainSubsystem.drive(
-        // m_driverController.getY(GenericHID.Hand.kLeft),
-        // m_driverController.getX(GenericHID.Hand.kRight)), m_drivetrainSubsystem
-        // ));
-        // new JoystickButton(m_driverController, Button.kBumperRight.value)
-        // .whenPressed(() -> { m_drivetrainSubsystem.enableCrawlMode(true);})
-        // .whenReleased(() -> { m_drivetrainSubsystem.enableCrawlMode(false);});
+        new JoystickButton(m_driverController, Button.kBumperRight.value)
+            .whenPressed(() -> { m_shootingSubsystem.shoot(1);})
+            .whenReleased(() -> {m_shootingSubsystem.shoot(0);});
+        //   new JoystickButton(m_driverController, Button.kBumperRight.value)
+        //   .whenPressed(() -> { m_drivetrainSubsystem.setMaxOutput(0.5);})
+        //   .whenReleased(() -> { m_drivetrainSubsystem.setMaxOutput(1);});
 
     }
 
@@ -86,23 +93,24 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        return new RunCommand(() -> {
-            double hasTarget = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
+        return null;
+        // return new RunCommand(() -> {
+        //     double hasTarget = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
 
-            double hOffset = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+        //     double hOffset = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
 
-            if (hasTarget == 1.0) {
-                double rotate = 0;
+        //     if (hasTarget == 1.0) {
+        //         double rotate = 0;
 
-                if (hOffset > 2.8) {
-                    rotate = -0.5;
-                } else if (hOffset < -2.8) {
-                    rotate = 0.5;
-                }
+        //         if (hOffset > 2.8) {
+        //             rotate = -0.5;
+        //         } else if (hOffset < -2.8) {
+        //             rotate = 0.5;
+        //         }
 
-                m_drivetrainSubsystem.drive(-0.5, rotate);
-            }
-        });
+        //         m_drivetrainSubsystem.drive(-0.5, rotate);
+        //     }
+        // });
 
         // An ExampleCommand will run in autonomous
         // return m_autoCommand;
